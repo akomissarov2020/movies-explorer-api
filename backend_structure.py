@@ -3,7 +3,7 @@
 import os
 
 if __name__ == '__main__':
-    
+
     folders = {
         "utils": "utils",
         "routes": "routes",
@@ -16,6 +16,8 @@ if __name__ == '__main__':
 
     files = {
         "app.js": "app.js",
+        "middlewares_auth": "middlewares/auth.js",
+        "middlewares_loggers": "middlewares/loggers.js",
     }
 
     models = ["user", "movie"]
