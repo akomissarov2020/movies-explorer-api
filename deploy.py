@@ -61,7 +61,7 @@ if __name__ == '__main__':
     print(command)
     os.system(command)
 
-  os.chdir("/home/akomissarov/{folder}")
+  os.chdir(f"/home/akomissarov/{folder}")
 
   if input("Install app?") or None:
     for command in install_app:
