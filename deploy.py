@@ -5,6 +5,9 @@ import os
 if __name__ == '__main__':
 
   os.chdir("/home/akomissarov")
+  folder = "movies-explorer-api"
+  user = "akomissarov"
+  branch = "level-1"
 
   install_nodejs = [
     "curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -",
@@ -27,6 +30,15 @@ if __name__ == '__main__':
     "mongo --version",
   ]
 
+  install_app = [
+    "npm install",
+    "sudo npm install pm2 -g",
+    "pm2 startup",
+    "pm2 start app.js",
+    f"sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u {user} --hp /home/{user}",
+    "pm2 save",
+  ]
+
   if input("Install mongodb?") or None:
     for command in install_mongodb:
       print(command)
@@ -45,5 +57,18 @@ if __name__ == '__main__':
   repository = input("Clone repository?") or None
   if repository:
     folder = repository.split("/")[-1].split(".git")[0]
-    command = f"git clone {repository} && cd {folder}"
+    command = f"git clone {repository} && cd {folder} &&  git checkout {branch}"
     print(command)
+    os.system(command)
+
+  os.chdir("/home/akomissarov/{folder}")
+
+  if input("Install app?") or None:
+    for command in install_app:
+      print(command)
+      os.system(command)
+
+
+
+
+
