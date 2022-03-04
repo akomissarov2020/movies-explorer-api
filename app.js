@@ -6,8 +6,9 @@ const cookieParser = require('cookie-parser');
 const authMiddleware = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/user');
 const Error404 = require('./errors/error404');
+const Error500 = require('./errors/error500');
 const { requestLogger, errorLogger } = require('./middlewares/loggers');
-
+const { DATABASE } = process.env;
 const { PORT = 3000 } = process.env;
 const app = express();
 
@@ -19,7 +20,7 @@ const allowedCors = [
   'localhost:3000',
 ];
 
-mongoose.connect('mongodb://localhost:27017/bitfilmsdb')
+mongoose.connect('mongodb://localhost:27017/' + bitfilmsdb')
   .catch((err) => {
     console.log({ message: `Ошибка подключения к базе данных: ${err} ` });
     throw Error(`Ошибка подключения к базе данных: ${err} `);
@@ -88,7 +89,7 @@ app.use((err, req, res, next) => {
   // console.log(message);
   // console.log(name);
   res.status(statusCode).send(
-    { message: statusCode === 500 ? 'На сервере произошла ошибка' : message },
+    { message: statusCode === 500 ? Error500('На сервере произошла ошибка') : message },
   );
   next();
 });

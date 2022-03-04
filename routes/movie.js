@@ -3,26 +3,26 @@ const router = require('express').Router();
 const { validateURL } = require('../utils/local_validators');
 
 const {
-  getMovie,
+  getMovies,
   createMovie,
   deleteMovie,
 } = require('../controllers/movie');
 
-router.get('/api/movies', getMovie);
+router.get('/api/movies', getMovies);
 
 router.post('/api/movies', celebrate({
   params: Joi.object().keys({
-    country: Joi.string().length(24).hex(),
-    director: Joi.string().length(24).hex(),
-    duration: Joi.string().length(24).hex(),
-    year: Joi.string().length(24).hex(),
-    description: Joi.string().length(24).hex(),
-    image: Joi.string().length(24).hex(),
-    trailer: Joi.string().length(24).hex(),
-    nameRU: Joi.string().length(24).hex(),
-    nameEN: Joi.string().length(24).hex(),
-    thumbnail: Joi.string().length(24).hex(),
-    movieId: Joi.string().length(24).hex(),
+    country: Joi.string(),
+    director: Joi.string(),
+    duration: Joi.number(),
+    year: Joi.number(),
+    description: Joi.string(),
+    image: Joi.string().required().custom(validateURL),
+    trailer: Joi.string().required().custom(validateURL),
+    nameRU: Joi.string(),
+    nameEN: Joi.string(),
+    thumbnail: Joi.string().required().custom(validateURL),
+    movieId: Joi.string(),
   }),
 }), createMovie);
 
