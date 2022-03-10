@@ -54,6 +54,7 @@ describe('User', () => {
           res.should.have.status(400);
           res.should.to.be.json;
           res.body.should.be.a('object');
+          chai.expect(res.body).to.have.all.keys('message');
           done();
         });
     });
@@ -65,6 +66,7 @@ describe('User', () => {
           res.should.have.status(400);
           res.should.to.be.json;
           res.body.should.be.a('object');
+          chai.expect(res.body).to.have.all.keys('message');
           done();
         });
     });

@@ -1,5 +1,6 @@
 const winston = require('winston');
 const expressWinston = require('express-winston');
+const { NODE_ENV } = process.env;
 
 const levels = {
   error: 0,
@@ -10,9 +11,15 @@ const levels = {
 };
 
 const level = () => {
-  const env = process.env.NODE_ENV || 'development';
-  const isDevelopment = env === 'development';
-  return isDevelopment ? 'debug' : 'warn';
+  const env = NODE_ENV || 'development';
+  const isProduction = env === 'production';
+  return isProduction ? 'warn' : 'debug';
+};
+
+const levelForErrors = () => {
+  const env = NODE_ENV || 'development';
+  const isProduction = env === 'production';
+  return isProduction ? 'error' : 'warn';
 };
 
 const colors = {
@@ -29,7 +36,6 @@ const transports = [
   new winston.transports.Console(),
   new winston.transports.File({
     filename: 'logs/error.log',
-    level: 'error',
   }),
 ];
 

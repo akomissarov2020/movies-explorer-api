@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
-const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const authMiddleware = require('./middlewares/auth');
 const { handleCORsOptionsRequest } = require('./middlewares/cors');
@@ -47,9 +46,8 @@ app.use(require('./routes/auth'));
 app.use(authMiddleware);
 app.use(require('./routes/index'));
 
-// Error handling (logging, celebrate, general)
+// Error handling (logging, handle celebrate, send response)
 app.use(errorLogger);
-app.use(errors());
 app.use(errorsHandlingMiddleware);
 
 // APP runner
