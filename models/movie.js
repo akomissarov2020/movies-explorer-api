@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { validateURLforScheme } = require('../utils/local_validators');
+const { validateURLforScheme } = require('../utils/custom_validators');
 
 const moviesSchema = new mongoose.Schema({
   country: {

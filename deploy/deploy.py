@@ -91,6 +91,7 @@ if __name__ == '__main__':
     "pm2 save",
   ]
 
+
   install_nginx = [
     "sudo apt update",
     "sudo apt install -y nginx",

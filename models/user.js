@@ -2,12 +2,14 @@ const validator = require('validator');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Error401 = require('../errors/error401');
+const { DEFAULT_USER_NAME } = require('../constants/parameters');
+const { ERROR_401_TEXT } = require('../constants/error_texts');
 
 const usersSchema = new mongoose.Schema({
   name: {
     type: String,
     required: false,
-    default: 'Пользователь',
+    default: DEFAULT_USER_NAME,
     minlength: 2,
     maxlength: 30,
     validate: /[\wа-яА-ЯЁёё-]+/,
@@ -32,12 +34,12 @@ usersSchema.statics.findUserByCredentials = function (email, password) {
     .select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error401('Неправильные почта или пароль'));
+        return Promise.reject(new Error401(ERROR_401_TEXT));
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error401('Неправильные почта или пароль'));
+            return Promise.reject(new Error401(ERROR_401_TEXT));
           }
           return user;
         });

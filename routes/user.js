@@ -1,5 +1,6 @@
-const { celebrate, Joi } = require('celebrate');
 const router = require('express').Router();
+
+const { validateUpdateUser } = require('../utils/request_validators');
 
 const {
   getUser,
@@ -9,12 +10,7 @@ const {
 
 router.route('/api/users/me')
   .get(getUser)
-  .patch(celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().email().required(),
-      name: Joi.string().required().min(2).max(30),
-    }),
-  }), updateUser)
+  .patch(validateUpdateUser, updateUser)
   .delete(logoutUser);
 
 module.exports = router;

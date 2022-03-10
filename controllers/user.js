@@ -6,6 +6,16 @@ const Error401 = require('../errors/error401');
 const Error404 = require('../errors/error404');
 const Error409 = require('../errors/error409');
 
+const {
+  ERROR_400_TEXT,
+  ERROR_401_TEXT,
+  ERROR_409_TEXT,
+  ERROR_400_EMAIL_TEXT,
+  ERROR_404_USER_TEXT,
+} = require('../constants/error_texts');
+
+const { JWT_COOKIE_AGE } = require('../constants/parameters');
+
 require('dotenv').config();
 
 const { NODE_ENV, PROD_JWT_SECRET } = process.env;
@@ -13,9 +23,9 @@ const { DEV_JWT_SECRET } = require('../constants/devs');
 
 const JWT_SECRET = NODE_ENV === 'production' ? PROD_JWT_SECRET : DEV_JWT_SECRET;
 
-module.exports.createUser = (req, res, next) => {
+module.exports.signup = (req, res, next) => {
   if (!req.body) {
-    return next(new Error400('Неправильные параметры'));
+    return next(new Error400(ERROR_400_TEXT));
   }
 
   const {
@@ -23,13 +33,13 @@ module.exports.createUser = (req, res, next) => {
   } = req.body;
 
   if (!email || !password) {
-    return next(new Error400('Неправильные параметры'));
+    return next(new Error400(ERROR_400_TEXT));
   }
 
   return User.findOne({ email })
     .then((user) => {
       if (user) {
-        throw new Error409('Пользователь существует');
+        throw new Error409(ERROR_409_TEXT);
       }
 
       bcrypt.hash(password, 10)
@@ -39,10 +49,10 @@ module.exports.createUser = (req, res, next) => {
         .then(res.status(201).send({}))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            return next(new Error400('Неправильные формат email'));
+            return next(new Error400(ERROR_400_EMAIL_TEXT));
           }
           if (err.name === 'CastError' || err.name === 'ValidationError') {
-            return next(new Error400('Неправильные параметры'));
+            return next(new Error400(ERROR_400_TEXT));
           }
           return next(err);
         });
@@ -55,13 +65,13 @@ module.exports.getUser = (req, res, next) => {
   User.findById(_id)
     .then((user) => {
       if (!user) {
-        return next(new Error404('Пользователь не найден'));
+        return next(new Error404(ERROR_404_USER_TEXT));
       }
       return res.send({ name: user.name, email: user.email });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(new Error400('Неправильные параметры'));
+        return next(new Error400(ERROR_400_TEXT));
       }
       return next(err);
     });
@@ -70,44 +80,41 @@ module.exports.getUser = (req, res, next) => {
 module.exports.updateUser = (req, res, next) => {
   const { _id } = req.user;
   if (!req.body) {
-    return next(new Error400('Неправильные параметры'));
+    return next(new Error400(ERROR_400_TEXT));
   }
   const { name, email } = req.body;
   if (!name || !email) {
-    return next(new Error400('Неправильные параметры'));
+    return next(new Error400(ERROR_400_TEXT));
   }
   return User.findByIdAndUpdate(_id, { name, email }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return next(new Error404('Пользователь не найден'));
+        return next(new Error404(ERROR_404_USER_TEXT));
       }
       return res.send({ name: user.name, email: user.email });
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        return next(new Error400('Неправильные параметры'));
+        return next(new Error400(ERROR_400_TEXT));
       }
       return next(err);
     });
 };
 
 module.exports.login = (req, res, next) => {
-  if (!req.body || !req.body.email || !req.body.password) {
-    return next(new Error400('Неправильные параметры'));
-  }
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user) {
-        return next(new Error401('Неправильные почта или пароль'));
+        return next(new Error401(ERROR_401_TEXT));
       }
       const token = jwt.sign(
         { _id: user._id },
         JWT_SECRET,
       );
       return res.status(200).cookie('jwt', token, {
-        maxAge: 60 * 60 * 24 * 7,
+        maxAge: JWT_COOKIE_AGE,
         httpOnly: true,
         sameSite: true,
       }).send({}).end();
