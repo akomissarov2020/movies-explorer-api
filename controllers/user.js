@@ -8,12 +8,10 @@ const Error409 = require('../errors/error409');
 
 require('dotenv').config();
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV, PROD_JWT_SECRET } = process.env;
+const { DEV_JWT_SECRET } = require('../constants/devs');
 
-function getUserWithoutPassword(user) {
-  const { password, ...responseUser } = user._doc;
-  return responseUser;
-}
+const JWT_SECRET = NODE_ENV === 'production' ? PROD_JWT_SECRET : DEV_JWT_SECRET;
 
 module.exports.createUser = (req, res, next) => {
   if (!req.body) {
@@ -38,7 +36,7 @@ module.exports.createUser = (req, res, next) => {
         .then((hash) => User.create({
           name, email, password: hash,
         }))
-        .then((usr) => res.status(201).send(getUserWithoutPassword(usr)))
+        .then(res.status(201).send({}))
         .catch((err) => {
           if (err.name === 'ValidationError') {
             return next(new Error400('Неправильные формат email'));
@@ -59,7 +57,7 @@ module.exports.getUser = (req, res, next) => {
       if (!user) {
         return next(new Error404('Пользователь не найден'));
       }
-      return res.send(user);
+      return res.send({ name: user.name, email: user.email });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -83,7 +81,7 @@ module.exports.updateUser = (req, res, next) => {
       if (!user) {
         return next(new Error404('Пользователь не найден'));
       }
-      return res.send(user);
+      return res.send({ name: user.name, email: user.email });
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
@@ -106,16 +104,17 @@ module.exports.login = (req, res, next) => {
       }
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        JWT_SECRET,
       );
-      const filteredUser = getUserWithoutPassword(user);
       return res.status(200).cookie('jwt', token, {
         maxAge: 60 * 60 * 24 * 7,
         httpOnly: true,
         sameSite: true,
-      }).send(filteredUser).end();
+      }).send({}).end();
     })
     .catch((err) => next(err));
 };
 
-module.exports.logoutUser = (req, res) => res.clearCookie('jwt').send({}).end();
+module.exports.logoutUser = (req, res) => {
+  res.clearCookie('jwt').send({}).end();
+};
