@@ -43,13 +43,14 @@ if __name__ == '__main__':
   user = "akomissarov"
   branch = "level-1"
   nginx_config = "movies-explorer-api.conf"
+  IP = "51.250.30.152"
 
   os.chdir("/home/%s" user)
 
   nginx_config_settings = {
     "root_folder": "/home/akomissarov/express-mesto/frontend/build/",
-    "front_address": "mesto2002.nomoredomains.work",
-    "back_address": "mesto2002.nomoredomains.work/api/",
+    "front_address": "smotrelka.nomoredomains.work",
+    "back_address": "api.smotrelka.nomoredomains.work",
   }
 
   nginx_config_path = "/etc/nginx/sites-available/default"

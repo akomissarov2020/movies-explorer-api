@@ -18,10 +18,10 @@ const PORT = NODE_ENV === 'production' ? PROD_PORT : DEV_PORT;
 const app = express();
 
 const allowedCors = [
-  'http://mesto2002.nomoredomains.work/',
-  'https://mesto2002.nomoredomains.work/',
-  'http://mesto2002.nomoredomains.work/api/',
-  'https://mesto2002.nomoredomains.work/api/',
+  'http://smotrelka.nomoredomains.work/',
+  'https://smotrelka.nomoredomains.work/',
+  'http://api.smotrelka.nomoredomains.work/',
+  'https://api.smotrelka.nomoredomains.work/',
   'localhost:3000',
 ];
 
