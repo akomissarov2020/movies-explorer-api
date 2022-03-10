@@ -1,4 +1,9 @@
-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#@created: 03.03.2022
+#@author: Aleksey Komissarov
+#@contact: ad3002@gmail.com
 
 import os
 

@@ -1,4 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#@created: 03.03.2022
+#@author: Aleksey Komissarov
+#@contact: ad3002@gmail.com
+
 import os
+from settings import folder, user, branch, nginx_config_settings
 
 nginx_config_template = '''server {
         listen 80;
@@ -38,14 +46,11 @@ server {
 
 if __name__ == '__main__':
 
-
   folder = "movies-explorer-api"
   user = "akomissarov"
   branch = "level-1"
   nginx_config = "movies-explorer-api.conf"
-  IP = "51.250.30.152"
-
-  os.chdir("/home/%s" % user)
+  IP_address = "51.250.30.152"
 
   nginx_config_settings = {
     "root_folder": "/home/akomissarov/express-mesto/frontend/build/",
@@ -61,11 +66,6 @@ if __name__ == '__main__':
     "sudo apt install -y nodejs",
     "node -v",
   ]
-
-  if input("Install nodejs?") or None:
-    for command in install_nodejs:
-      print(command)
-      os.system(command)
 
   install_mongodb = [
     "curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -",
@@ -117,12 +117,17 @@ if __name__ == '__main__':
     'sudo certbot renew --pre-hook "service nginx stop" --post-hook "service nginx start"',
   ]
 
+  os.chdir("/home/%s" % user)
+
+  if input("Install nodejs?") or None:
+    for command in install_nodejs:
+      print(command)
+      os.system(command)
+
   if input("Install mongodb?") or None:
     for command in install_mongodb:
       print(command)
       os.system(command)
-
-
 
   if input("Install git?") or None:
     for command in install_git:
@@ -162,10 +167,3 @@ if __name__ == '__main__':
     for command in reissue_https_cert:
       print(command)
       os.system(command)
-
-
-
-
-
-
-
