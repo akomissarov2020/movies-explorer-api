@@ -45,7 +45,7 @@ if __name__ == '__main__':
   nginx_config = "movies-explorer-api.conf"
   IP = "51.250.30.152"
 
-  os.chdir("/home/%s" user)
+  os.chdir("/home/%s" % user)
 
   nginx_config_settings = {
     "root_folder": "/home/akomissarov/express-mesto/frontend/build/",
