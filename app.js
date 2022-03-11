@@ -6,10 +6,11 @@ const cookieParser = require('cookie-parser');
 const authMiddleware = require('./middlewares/auth');
 const { handleCORsOptionsRequest } = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/loggers');
-const { errorsHandlingMiddleware } = require('./middlewares/errors');
+const {
+  errorsHandlingMiddleware,
+  error404HandlingMiddleware,
+} = require('./middlewares/errors');
 const { rateLimiterMiddleware } = require('./middlewares/rate_limiter');
-const Error404 = require('./errors/error404');
-const { ERROR_404_URL_TEXT } = require('./constants/error_texts');
 
 // Production vs development settings
 const { DEV_DATABASE, DEV_PORT = 3000 } = require('./constants/devs');
@@ -48,9 +49,7 @@ app.use(require('./routes/auth'));
 app.use(authMiddleware);
 app.use(require('./routes/index'));
 
-app.use('*', (req, res, next) => next(
-  new Error404(ERROR_404_URL_TEXT),
-));
+app.use('*', error404HandlingMiddleware);
 
 // Error handling (logging, handle celebrate, send response)
 app.use(errorLogger);
