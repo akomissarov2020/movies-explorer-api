@@ -310,3 +310,18 @@ describe('Movie', () => {
     });
   });
 });
+
+describe('Test 404', () => {
+  it('it should return correct 404', (done) => {
+    chai.request(server)
+      .get('/user/me')
+      .set('Cookie', cookieStr)
+      .end((err, res) => {
+        res.should.have.status(404);
+        res.should.to.be.json;
+        res.body.should.be.a('object');
+        chai.expect(res.body).to.have.all.keys('message');
+        done();
+      });
+  });
+});
