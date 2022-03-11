@@ -1,5 +1,6 @@
 const winston = require('winston');
 const expressWinston = require('express-winston');
+
 const { NODE_ENV } = process.env;
 
 const levels = {
@@ -14,12 +15,6 @@ const level = () => {
   const env = NODE_ENV || 'development';
   const isProduction = env === 'production';
   return isProduction ? 'warn' : 'debug';
-};
-
-const levelForErrors = () => {
-  const env = NODE_ENV || 'development';
-  const isProduction = env === 'production';
-  return isProduction ? 'error' : 'warn';
 };
 
 const colors = {
