@@ -7,10 +7,10 @@ const {
 
 const { login, signup } = require('../controllers/user');
 
-router.route('/api/signin')
+router.route('/signin')
   .post(validateSignin, login);
 
-router.route('/api/signup')
+router.route('/signup')
   .post(validateSignup, signup);
 
 module.exports = router;

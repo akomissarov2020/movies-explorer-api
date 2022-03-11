@@ -6,12 +6,8 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const User = require('../models/user');
 const Movie = require('../models/movie');
-const Cookie = require('cookie');
-const jwt = require('jsonwebtoken');
-var assert = require('assert');
 
 const server = require('../app');
-
 const should = chai.should();
 
 chai.use(chaiHttp);
@@ -48,7 +44,7 @@ describe('User', () => {
   describe('/POST signup', () => {
     it('it should make data validation 1', (done) => {
       chai.request(server)
-        .post('/api/signup')
+        .post('/signup')
         .send({})
         .end((err, res) => {
           res.should.have.status(400);
@@ -60,7 +56,7 @@ describe('User', () => {
     });
     it('it should make data validation 2', (done) => {
       chai.request(server)
-        .post('/api/signup')
+        .post('/signup')
         .send(wrong_email_user)
         .end((err, res) => {
           res.should.have.status(400);
@@ -72,7 +68,7 @@ describe('User', () => {
     });
     it('it should POST signup data', (done) => {
       chai.request(server)
-        .post('/api/signup')
+        .post('/signup')
         .send(user)
         .end((err, res) => {
           res.should.have.status(201);
@@ -84,7 +80,7 @@ describe('User', () => {
     });
     it('it should reject with 409 if user exists', (done) => {
       chai.request(server)
-        .post('/api/signup')
+        .post('/signup')
         .send({ name: user.name, email: user.email, password: user.password })
         .end((err, res) => {
           res.should.have.status(409);
@@ -95,7 +91,7 @@ describe('User', () => {
     });
     it('it should signup user 2', (done) => {
       chai.request(server)
-      .post('/api/signup')
+      .post('/signup')
       .send({ name: second_user.name, email: second_user.email, password: second_user.password })
       .end((err, res) => {
         res.should.have.status(201);
@@ -107,7 +103,7 @@ describe('User', () => {
   describe('/POST login', () => {
     it('it should not returns exact message about wrong creds', (done) => {
       chai.request(server)
-        .post('/api/signin')
+        .post('/signin')
         .send({ email: user.email, password: user.password + 'wrong' })
         .end((err, res) => {
           res.should.have.status(401);
@@ -121,7 +117,7 @@ describe('User', () => {
     });
     it('it should POST login data', (done) => {
       chai.request(server)
-        .post('/api/signin')
+        .post('/signin')
         .send({ email: user.email, password: user.password })
         .end((err, res) => {
           res.should.have.status(200);
@@ -135,7 +131,7 @@ describe('User', () => {
     });
     it('it should signin user 2', (done) => {
       chai.request(server)
-      .post('/api/signin')
+      .post('/signin')
       .send({ email: second_user.email, password: second_user.password })
       .end((err, res) => {
         res.should.have.status(200);
@@ -147,7 +143,7 @@ describe('User', () => {
   describe('/GET user', () => {
     it('it should get user data', (done) => {
       chai.request(server)
-        .get('/api/users/me')
+        .get('/users/me')
         .set('Cookie', cookieStr)
         .end((err, res) => {
           res.should.have.status(200);
@@ -161,7 +157,7 @@ describe('User', () => {
     });
     it('it should not get user data without jwt', (done) => {
       chai.request(server)
-        .get('/api/users/me')
+        .get('/users/me')
         .end((err, res) => {
           res.should.have.status(401);
           res.should.to.be.json;
@@ -174,7 +170,7 @@ describe('User', () => {
   describe('/UPDATE user', () => {
     it('it should update user data', (done) => {
       chai.request(server)
-        .patch('/api/users/me')
+        .patch('/users/me')
         .set('Cookie', cookieStr)
         .send({ name: updated_user.name, email: updated_user.email })
         .end((err, res) => {
@@ -193,7 +189,7 @@ describe('User', () => {
   describe('/DELETE logout', () => {
     it('it should logout user', (done) => {
       chai.request(server)
-        .delete('/api/users/me')
+        .delete('/users/me')
         .set('Cookie', cookieStr)
         .end((err, res) => {
           res.should.have.status(200);
@@ -229,7 +225,7 @@ describe('Movie', () => {
   describe('/POST movies', () => {
     it('it should not save movie without auth', (done) => {
       chai.request(server)
-        .post('/api/movies')
+        .post('/movies')
         .send(movie)
         .end((err, res) => {
           res.should.have.status(401);
@@ -241,7 +237,7 @@ describe('Movie', () => {
     });
     it('it should save movie', (done) => {
       chai.request(server)
-        .post('/api/movies')
+        .post('/movies')
         .set('Cookie', cookieStr)
         .send(movie)
         .end((err, res) => {
@@ -262,7 +258,7 @@ describe('Movie', () => {
   describe('/GET movies', () => {
     it('it should get movies', (done) => {
       chai.request(server)
-        .get('/api/movies')
+        .get('/movies')
         .set('Cookie', cookieStr)
         .end((err, res) => {
           res.should.have.status(200);
@@ -281,7 +277,7 @@ describe('Movie', () => {
   describe('/DELETE movies', () => {
     it('it should not delete movie from other user', (done) => {
       chai.request(server)
-        .delete(`/api/movies/${movie._id}`)
+        .delete(`/movies/${movie._id}`)
         .set('Cookie', second_cookieStr)
         .end((err, res) => {
           res.should.have.status(403);
@@ -292,7 +288,7 @@ describe('Movie', () => {
     });
     it('it should delete movie by id', (done) => {
       chai.request(server)
-        .delete(`/api/movies/${movie._id}`)
+        .delete(`/movies/${movie._id}`)
         .set('Cookie', cookieStr)
         .end((err, res) => {
           res.should.have.status(200);
@@ -303,7 +299,7 @@ describe('Movie', () => {
     });
     it('it should return 404 for delete absent movie by id', (done) => {
       chai.request(server)
-        .delete(`/api/movies/${movie._id}`)
+        .delete(`/movies/${movie._id}`)
         .set('Cookie', cookieStr)
         .end((err, res) => {
           res.should.have.status(404);
