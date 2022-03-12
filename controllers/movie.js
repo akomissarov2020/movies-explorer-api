@@ -12,16 +12,12 @@ const Movie = require('../models/movie');
 
 module.exports.getMovies = (req, res, next) => {
   Movie.find()
-    .populate('owner')
     .then((movies) => res.send(movies))
     .catch((err) => next(err));
 };
 
 module.exports.createMovie = (req, res, next) => {
   const owner = req.user._id;
-  if (!req.body) {
-    return next(new Error400(ERROR_400_TEXT));
-  }
   const {
     country,
     director, duration, year, description, image, trailerLink, nameRU, nameEN, thumbnail, movieId,
@@ -43,8 +39,7 @@ module.exports.createMovie = (req, res, next) => {
   })
     .then((movie) => {
       Movie.findById(movie._id)
-        .populate('owner')
-        .then((populatedMovie) => res.send(populatedMovie))
+        .then((foundMovie) => res.send(foundMovie))
         .catch((e) => e);
     })
     .catch((err) => {
@@ -67,7 +62,6 @@ module.exports.deleteMovie = (req, res, next) => {
         return next(new Error403(ERROR_403_TEXT));
       }
       return Movie.findByIdAndRemove(req.params.movieId)
-        .populate('owner')
         .then((movie) => res.send(movie))
         .catch((err) => {
           if (err.name === 'CastError') {
@@ -75,5 +69,6 @@ module.exports.deleteMovie = (req, res, next) => {
           }
           return next(err);
         });
-    });
+    })
+    .catch(next);
 };

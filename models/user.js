@@ -2,14 +2,12 @@ const validator = require('validator');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Error401 = require('../errors/error401');
-const { DEFAULT_USER_NAME } = require('../constants/parameters');
 const { ERROR_401_TEXT } = require('../constants/error_texts');
 
 const usersSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: false,
-    default: DEFAULT_USER_NAME,
+    required: true,
     minlength: 2,
     maxlength: 30,
     validate: /[\wа-яА-ЯЁёё-]+/,
@@ -24,6 +22,7 @@ const usersSchema = new mongoose.Schema({
   },
   password: {
     type: String,
+    minlength: 5,
     required: true,
     select: false,
   },

@@ -10,53 +10,28 @@ const {
   ERROR_400_TEXT,
   ERROR_401_TEXT,
   ERROR_409_TEXT,
-  ERROR_400_EMAIL_TEXT,
   ERROR_404_USER_TEXT,
 } = require('../constants/error_texts');
 
 const { JWT_COOKIE_AGE } = require('../constants/parameters');
-
-require('dotenv').config();
-
 const { NODE_ENV, PROD_JWT_SECRET } = process.env;
 const { DEV_JWT_SECRET } = require('../constants/devs');
 
 const JWT_SECRET = NODE_ENV === 'production' ? PROD_JWT_SECRET : DEV_JWT_SECRET;
 
 module.exports.signup = (req, res, next) => {
-  if (!req.body) {
-    return next(new Error400(ERROR_400_TEXT));
-  }
-
-  const {
-    name, email, password,
-  } = req.body;
-
-  if (!email || !password) {
-    return next(new Error400(ERROR_400_TEXT));
-  }
-
-  return User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        throw new Error409(ERROR_409_TEXT);
-      }
-
-      bcrypt.hash(password, 10)
-        .then((hash) => User.create({
-          name, email, password: hash,
-        }))
-        .then(res.status(201).send({}))
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            return next(new Error400(ERROR_400_EMAIL_TEXT));
-          }
-          if (err.name === 'CastError' || err.name === 'ValidationError') {
-            return next(new Error400(ERROR_400_TEXT));
-          }
-          return next(err);
-        });
-    })
+  const { name, email, password } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create(
+      { name, email, password: hash },
+    )
+      .then(() => res.status(201).send({}))
+      .catch((err) => {
+        if (err.code === 11000) {
+          return next(new Error409(ERROR_409_TEXT));
+        }
+        return next(err);
+      }))
     .catch(next);
 };
 
@@ -79,13 +54,9 @@ module.exports.getUser = (req, res, next) => {
 
 module.exports.updateUser = (req, res, next) => {
   const { _id } = req.user;
-  if (!req.body) {
-    return next(new Error400(ERROR_400_TEXT));
-  }
+
   const { name, email } = req.body;
-  if (!name || !email) {
-    return next(new Error400(ERROR_400_TEXT));
-  }
+
   return User.findByIdAndUpdate(_id, { name, email }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
@@ -94,7 +65,10 @@ module.exports.updateUser = (req, res, next) => {
       return res.send({ name: user.name, email: user.email });
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.code === 11000) {
+        return next(new Error409(ERROR_409_TEXT));
+      }
+      if (err.name === 'ValidationError') {
         return next(new Error400(ERROR_400_TEXT));
       }
       return next(err);
