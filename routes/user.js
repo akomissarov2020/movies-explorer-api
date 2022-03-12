@@ -8,7 +8,7 @@ const {
   logoutUser,
 } = require('../controllers/user');
 
-router.route('/users/me')
+router.route('/me')
   .get(getUser)
   .patch(validateUpdateUser, updateUser)
   .delete(logoutUser);
