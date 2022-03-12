@@ -69,7 +69,7 @@ describe('User', () => {
     it('it should POST signup data', (done) => {
       chai.request(server)
         .post('/signup')
-        .send(user)
+        .send({ name: user.name, email: user.email, password: user.password })
         .end((err, res) => {
           res.should.have.status(201);
           res.should.to.be.json;
@@ -185,11 +185,24 @@ describe('User', () => {
           done();
         });
     });
-  });
-  describe('/DELETE logout', () => {
-    it('it should logout user', (done) => {
+    it('it should not update user data with exist user email', (done) => {
       chai.request(server)
-        .delete('/users/me')
+        .patch('/users/me')
+        .set('Cookie', cookieStr)
+        .send({ name: updated_user.name, email: second_user.email })
+        .end((err, res) => {
+          res.should.have.status(409);
+          res.should.to.be.json;
+          res.body.should.be.a('object');
+          chai.expect(res.body).to.have.all.keys('message');
+          done();
+        });
+    });
+  });
+  describe('/DELETE signout', () => {
+    it('it should signout user', (done) => {
+      chai.request(server)
+        .delete('/signout')
         .set('Cookie', cookieStr)
         .end((err, res) => {
           res.should.have.status(200);
@@ -213,7 +226,7 @@ describe('Movie', () => {
     trailerLink: 'https://www.youtube.com/watch?v=omrEdX88tTI',
     thumbnail: 'https://thumbs.dreamstime.com/z/test.jpg',
     owner: user._id,
-    movieId: "1",
+    movieId: 100,
     nameRU: 'Какое-то кино',
     nameEN: 'Some film',
   };
