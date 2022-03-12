@@ -3,23 +3,23 @@ const { validateURL } = require('./custom_validators');
 
 module.exports.validateAddMovie = celebrate({
   body: Joi.object().keys({
-    country: Joi.string(),
-    director: Joi.string(),
-    duration: Joi.number(),
-    year: Joi.number(),
-    description: Joi.string(),
+    country: Joi.string().required(),
+    director: Joi.string().required(),
+    duration: Joi.number().required(),
+    year: Joi.number().required(),
+    description: Joi.string().required(),
     image: Joi.string().required().custom(validateURL),
     trailerLink: Joi.string().required().custom(validateURL),
     thumbnail: Joi.string().required().custom(validateURL),
-    nameRU: Joi.string(),
-    nameEN: Joi.string(),
-    movieId: Joi.string(),
+    nameRU: Joi.string().required(),
+    nameEN: Joi.string().required(),
+    movieId: Joi.number().required(),
   }),
 });
 
 module.exports.validateDeleteMovie = celebrate({
   params: Joi.object().keys({
-    movieId: Joi.string().length(24).hex(),
+    movieId: Joi.string().required().length(24).hex(),
   }),
 });
 
@@ -39,8 +39,8 @@ module.exports.validateSignin = celebrate({
 
 module.exports.validateSignup = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().min(2).max(30).required(),
     email: Joi.string().email().required(),
-    password: Joi.string().required(),
+    password: Joi.string().min(5).required(),
   }),
 });
