@@ -6,7 +6,7 @@ module.exports.handleCORsOptionsRequest = (req, res, next) => {
 
   const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 
-  if (allowedCORS.includes(origin)) {
+  if (true || allowedCORS.includes(origin)) {
     if (method === 'OPTIONS') {
       res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
       return res.end();
