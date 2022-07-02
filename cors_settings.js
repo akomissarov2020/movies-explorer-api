@@ -1,4 +1,5 @@
 const allowedCORS = [
+  '*',
   'http://smotrelka.nomoredomains.work/',
   'https://smotrelka.nomoredomains.work/',
   'http://api.smotrelka.nomoredomains.work/',
