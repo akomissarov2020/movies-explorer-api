@@ -7,7 +7,7 @@ const ERROR_401_AUTH_TEXT = 'Необходима авторизация';
 const ERROR_409_TEXT = 'Пользователь существует';
 const ERROR_400_EMAIL_TEXT = 'Неправильные формат email';
 const ERROR_404_USER_TEXT = 'Пользователь не найден';
-const ERROR_404_URL_TEXT = 'Ресурс не найден. Проверьте URL и метод запроса';
+const ERROR_404_URL_TEXT = 'Ресурс не найден. Проверьте URL и метод запроса!';
 const WRONG_URL_FORMAT = 'Неправильный формат ссылки';
 
 module.exports = {
