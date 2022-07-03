@@ -8,7 +8,8 @@ module.exports.handleCORsOptionsRequest = (req, res, next) => {
 
   if (true || allowedCORS.includes(origin)) {
     if (method === 'OPTIONS') {
-      res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+      //res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+      res.header('Access-Control-Allow-Origin', origin);
       return res.end();
     }
     res.header('Access-Control-Allow-Origin', origin);
