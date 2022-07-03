@@ -4,11 +4,11 @@ module.exports.handleCORsOptionsRequest = (req, res, next) => {
   const { origin } = req.headers;
   const { method } = req;
 
-  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
+  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS';
 
   if (true || allowedCORS.includes(origin)) {
     if (method === 'OPTIONS') {
-      //res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+      res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
       res.header('Access-Control-Allow-Origin', origin);
       return res.end();
     }
