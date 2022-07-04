@@ -10,10 +10,14 @@ const { DEV_JWT_SECRET } = require('../constants/devs');
 const JWT_SECRET = NODE_ENV === 'production' ? PROD_JWT_SECRET : DEV_JWT_SECRET;
 
 module.exports = (req, res, next) => {
-  if (!req.cookies || !req.cookies.jwt) {
+  
+  const authHeader = req.headers.authorization;
+
+  if (authHeader) {
+      const token = authHeader.split(' ')[1];
+  } else {
     return next(new Error401(ERROR_401_AUTH_TEXT));
   }
-  const token = req.cookies.jwt;
   try {
     const payload = jwt.verify(token, JWT_SECRET);
     req.user = payload;
