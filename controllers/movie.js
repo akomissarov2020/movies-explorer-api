@@ -11,19 +11,22 @@ const {
 const Movie = require('../models/movie');
 
 module.exports.getMovies = (req, res, next) => {
-  Movie.find()
-    .then((movies) => res.send(movies))
-    .catch((err) => next(err));
+  const currentUserId = req.user._id;
+  Movie.find({ owner: currentUserId })
+    .then((movies) => res.send({ data: movies }))
+    .catch((err) => {
+      next(err);
+    });
 };
 
 module.exports.createMovie = (req, res, next) => {
-  const owner = req.user._id;
   const {
-    country,
-    director, duration, year, description, image, trailer, nameRU, nameEN, thumbnail, movieId,
+    country, director, duration, year, description, image,
+    trailer, nameRU, nameEN, thumbnail, movieId,
   } = req.body;
 
-  return Movie.create({
+  const owner = req.user._id;
+  Movie.create({
     country,
     director,
     duration,
@@ -33,20 +36,19 @@ module.exports.createMovie = (req, res, next) => {
     trailer,
     nameRU,
     nameEN,
-    owner,
     thumbnail,
     movieId,
+    owner,
   })
-    .then((movie) => {
-      Movie.findById(movie._id)
-        .then((foundMovie) => res.send(foundMovie))
-        .catch((e) => e);
-    })
+    .then((movie) => res.send({ data: movie }))
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        return next(new Error400(ERROR_400_TEXT));
+      if (err.name === 'ValidationError') {
+        next(new ValidationError('Переданы некорректные данные в методы создания фильма'));
+      } else if (err.name === 'CastError') {
+        next(new CastError(ERROR_400_TEXT));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 
