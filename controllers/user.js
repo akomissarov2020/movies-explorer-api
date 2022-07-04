@@ -87,11 +87,17 @@ module.exports.login = (req, res, next) => {
         { _id: user._id },
         JWT_SECRET,
       );
-      return res.status(200).cookie('jwt', token, {
-        maxAge: JWT_COOKIE_AGE,
-        httpOnly: true,
-        sameSite: true,
-      }).send({}).end();
+      return res.send({
+        message: 'аутентификация прошла успешно',
+        data: {
+          token,
+        },
+      });
+//       return res.status(200).cookie('jwt', token, {
+//         maxAge: JWT_COOKIE_AGE,
+//         httpOnly: true,
+//         sameSite: true,
+//       }).send({}).end();
     })
     .catch((err) => next(err));
 };
