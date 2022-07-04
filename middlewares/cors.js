@@ -6,8 +6,7 @@ module.exports.handleCORsOptionsRequest = (req, res, next) => {
 
   const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS';
 
-  #if (allowedCORS.includes(origin)) {
-   if (true) {
+  if (allowedCORS.includes(origin)) {
     if (method === 'OPTIONS') {
       res.header("Access-Control-Allow-Origin", origin);
       res.header('Access-Control-Allow-Credentials', "true");
@@ -18,5 +17,6 @@ module.exports.handleCORsOptionsRequest = (req, res, next) => {
     res.header('Access-Control-Allow-Credentials', "true");
     res.header('Access-Control-Allow-Origin', origin);
   }
+  res.header('Access-Control-Allow-Origin', origin);
   return next();
 };
