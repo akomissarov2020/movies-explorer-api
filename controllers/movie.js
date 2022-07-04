@@ -47,11 +47,11 @@ module.exports.createMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError('Переданы некорректные данные в методы создания фильма'));
+        return next(new ValidationError('Переданы некорректные данные в методы создания фильма'));
       } else if (err.name === 'CastError') {
-        next(new CastError(ERROR_400_TEXT));
+        return next(new CastError(ERROR_400_TEXT));
       } else {
-        next(err);
+        return next(err);
       }
     });
 };
