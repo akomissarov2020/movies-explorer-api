@@ -4,17 +4,10 @@ const { validateURLforScheme } = require('../utils/custom_validators');
 const moviesSchema = new mongoose.Schema({
   country: {
     type: String,
-    required: true,
-    minlength: 2,
-    maxlength: 50,
-    validate: /[ \wа-яА-ЯЁёё-]+/,
   },
   director: {
     type: String,
     required: true,
-    minlength: 2,
-    maxlength: 50,
-    validate: /[ \wа-яА-ЯЁёё-]+/,
   },
   duration: {
     type: Number,
@@ -35,7 +28,7 @@ const moviesSchema = new mongoose.Schema({
       validator: validateURLforScheme,
     },
   },
-  trailerLink: {
+  trailer: {
     type: String,
     required: true,
     validate: {
