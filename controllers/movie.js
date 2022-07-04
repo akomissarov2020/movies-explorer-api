@@ -20,27 +20,31 @@ module.exports.getMovies = (req, res, next) => {
 };
 
 module.exports.createMovie = (req, res, next) => {
-  const {
-    country, director, duration, year, description, image,
-    trailer, nameRU, nameEN, thumbnail, movieId,
-  } = req.body;
+    const {
+      country, director, duration, year, description, image,
+      trailer, nameRU, nameEN, thumbnail, movieId,
+    } = req.body;
 
-  const owner = req.user._id;
-  Movie.create({
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailer,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-    owner,
-  })
-    .then((movie) => res.send({ data: movie }))
+    const owner = req.user._id;
+    Movie.create({
+      country,
+      director,
+      duration,
+      year,
+      description,
+      image,
+      trailer,
+      nameRU,
+      nameEN,
+      thumbnail,
+      movieId,
+      owner,
+    })
+    .then((movie) => {
+      Movie.findById(movie._id)
+        .then((foundMovie) => res.send(foundMovie))
+        .catch((e) => e);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Переданы некорректные данные в методы создания фильма'));
